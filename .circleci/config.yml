@@ -28,16 +28,13 @@ jobs:
           npm run test
       
   build-and-push:
-    docker:
-      - image: cimg/docker:latest
+    executor: docker/docker
     steps:
+      - setup_remote_docker
       - checkout
-      - docker/login:
-          registry: docker-hub
-          token: $DOCKER_TOKEN
-      - run: |
-          echo "Building Docker image..."
-          docker build -t lolfoollor/node-app-for-devops:latest .
+      - docker/check
+      - docker/build:
+          image: lolfoollor/node-app-for-devops:latest
       - docker/push:
           image: lolfoollor/node-app-for-devops:latest
         
