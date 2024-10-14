@@ -34,9 +34,9 @@ jobs:
       - checkout
       - docker/check
       - docker/build:
-          image: lolfoollor/node-app-for-devops:latest
+          image: lolfoollor/node-app-for-devops
       - docker/push:
-          image: lolfoollor/node-app-for-devops:latest
+          image: lolfoollor/node-app-for-devops
         
 workflows:
   simple_workflow:
