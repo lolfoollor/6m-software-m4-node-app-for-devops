@@ -61,4 +61,4 @@ workflows:
           requires:
             - build
       - build-and-push
-      - publish
+      - deploy
