@@ -74,11 +74,9 @@ workflows:
           filters:
             branches:
               only:
-                - main
                 - release
       - deploy:
           filters:
             branches:
               only:
-                - main
                 - release
