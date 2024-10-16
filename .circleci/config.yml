@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.7.2
+  heroku: circleci/heroku@2.0
 
 jobs:
   build:
@@ -37,6 +38,20 @@ jobs:
           image: lolfoollor/node-app-for-devops
       - docker/push:
           image: lolfoollor/node-app-for-devops
+    
+  deploy:
+    executor: heroku/default
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - checkout
+      - run:
+          name: Heroku Container Push
+          command: |
+            heroku container:login
+            heroku stack:set container -a jonathan-su-devops
+            heroku container:push web -a jonathan-su-devops
+            heroku container:release web -a jonathan-su-devops
         
 workflows:
   simple_workflow:
@@ -46,3 +61,4 @@ workflows:
           requires:
             - build
       - build-and-push
+      - publish
