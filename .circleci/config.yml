@@ -53,6 +53,7 @@ jobs:
             heroku stack:set container -a lolfoollor-su-devops
             heroku container:push web -a lolfoollor-su-devops
             heroku container:release web -a lolfoollor-su-devops
+  
   scan:
     docker:
         - image: cimg/node:16.10
