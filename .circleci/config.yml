@@ -4,6 +4,7 @@ orbs:
   node: circleci/node@5.0.1
   docker: circleci/docker@2.7.2
   heroku: circleci/heroku@2.0
+  snyk: snyk/snyk@1.5.0
 
 jobs:
   build:
@@ -38,7 +39,7 @@ jobs:
           image: lolfoollor/node-app-for-devops
       - docker/push:
           image: lolfoollor/node-app-for-devops
-    
+  
   deploy:
     executor: heroku/default
     steps:
@@ -52,6 +53,33 @@ jobs:
             heroku stack:set container -a lolfoollor-su-devops
             heroku container:push web -a lolfoollor-su-devops
             heroku container:release web -a lolfoollor-su-devops
+  
+  scan:
+    docker:
+        - image: cimg/node:16.10
+    environment:
+        IMAGE_NAME: lolfoollor/node-app-for-devops
+    steps:
+        - checkout
+        - setup_remote_docker      
+        - docker/check
+        - run: docker build -t $IMAGE_NAME .
+        - snyk/scan: 
+            docker-image-name: $IMAGE_NAME
+
+  codescan:
+    docker:
+      - image: cimg/node:16.10
+    environment:
+      IMAGE_NAME: lolfoollor/node-app-for-devops
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check
+      - run: docker build -t $IMAGE_NAME .
+      - snyk/install
+      - run: |
+          snyk code test
         
 workflows:
   simple_workflow:
@@ -80,3 +108,9 @@ workflows:
             branches:
               only:
                 - release
+      - scan:
+          requires:
+            - build
+      - codescan:
+          requires:
+            - build
